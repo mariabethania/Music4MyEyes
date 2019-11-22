@@ -109,7 +109,7 @@ float blue = 0;
 float start = 0;
 float amt = 0.05;
 float smooth;
-boolean smoothBool = false;
+boolean smoothBool = true;
 boolean playing;
 boolean showMenu;
 boolean showTitle;
@@ -315,7 +315,7 @@ keyPressed();
 float xVal = 0;
 float yVal = 0;
 if(theme == 7) {yVal = 0.03; xVal =0.01; flying -= 0.05;}
-else {yVal = 0.05; xVal = 0.03; flying -= 0.05;}
+else {yVal = 0.04; xVal = 0.03; flying -= 0.05;}
 /****************************************************************************************/
   //float yoff =flying;                    // generates terrain
   //for (int y = 0; y < rows; y++) {
@@ -332,7 +332,7 @@ else {yVal = 0.05; xVal = 0.03; flying -= 0.05;}
     float xOff =0.01;
     for (int x = 0; x < cols; x++) {
 
-      terrain[x][y] = map(noise(xOff,yOff),0,1,-depth1,50);   
+      terrain[x][y] = map(noise(xOff,yOff),0,1,-depth1,depth2);   
       flatterrain[x][y] = map(noise(xOff,yOff),0,1,0,0);   
       colorterrain[x][y] = map(noise(xOff,yOff),0,1,-20,20);   
       flagterrain[x][y] = map(noise(xOff,yOff),0,1,-depth1,depth2);   
@@ -459,8 +459,8 @@ fill(strkR,strkG,strkB,100);
 //      vertex(x*scl,(y+1)*scl, colorterrain[x][y+1] + flagArray[x][y+1]); 
 //}
 if (theme == 2) {
-      vertex(x*scl,y*scl, (terrain[x][y]) + noteArray[x][y]); 
-      vertex(x*scl,(y+1)*scl, terrain[x][y+1] + noteArray[x][y+1]); 
+      vertex(x*scl,y*scl, (colorterrain[x][y]) + noteArray[x][y]); 
+      vertex(x*scl,(y+1)*scl, colorterrain[x][y+1] + noteArray[x][y+1]); 
 }
 if (theme == 4) {
       vertex(x*scl,y*scl, (terrain[x][y]) + pyramidArray[x][y]); 
@@ -516,20 +516,21 @@ if (!smoothBool) {
             flagArray[x][y] = fft.getBand(freq)*amp*fx2*fy2*vol;
 } else 
 if (smoothBool) {
-smooth = lerp(map(noise(xoff,yoff),0,1,0,(fft.getBand(freq)*(fx)*(fy))*amp*vol),map(noise(xoff,yoff),0,1,0,(fft.getBand(freq+1)*(fx)*(fy))*amp*vol),amt);
-            noteArray[x][y] = smooth;
-smooth = lerp(map(noise(xoff,yoff),0,1,0,((fft.getBand(freq))*fx*fy*(amp)))*(vol),map(noise(xoff,yoff),0,1,0,((fft.getBand(freq+1))*fx*fy*(amp)))*(vol),amt);
-            colorArray[x][y] = smooth;
-smooth = lerp(((fft.getBand(freq))*(amp))*vol,((fft.getBand(freq+1))*(amp))*vol,amt);
-            cubeArray[x][y] = smooth;  // third vertex arrays
-smooth = lerp(((fft.getBand(freq))*(amp))*(fx)*(fy)*fx*fy*fx*fy*fx*fy*(vol),((fft.getBand(freq+1))*(amp))*(fx)*(fy)*fx*fy*fx*fy*fx*fy*(vol),amt);
-            cubeArray1[x][y] = smooth;
-smooth = lerp(map(noise(xoff,yoff),0,1,0,(fft.getBand(freq)*(fx)*(fy)*fx*fy*fx*fy)*amp*vol),map(noise(xoff,yoff),0,1,0,(fft.getBand(freq+1)*(fx)*(fy)*fx*fy*fx*fy)*amp*vol),amt);
-            rayoArray[x][y] = smooth;
-smooth = lerp(fft.getBand(freq)*amp*(fx)*(fy)*vol,fft.getBand(freq+1)*amp*(fx)*(fy)*vol,amt);
-            pyramidArray[x][y] = smooth;
-smooth = lerp(fft.getBand(freq)*amp*fx2*fy2*vol,fft.getBand(freq+1)*amp*fx2*fy2*vol,amt);
-            flagArray[x][y] = smooth;
+  smooth = lerp(fft.getBand(freq),0,amt);
+//smooth = lerp(map(noise(xoff,yoff),0,1,0,(fft.getBand(freq)*(fx)*(fy))*amp*vol),map(noise(xoff,yoff),0,1,0,(fft.getBand(freq+1)*(fx)*(fy))*amp*vol),amt);
+            noteArray[x][y] = map(noise(xoff,yoff),0,1,0,(smooth*(fx)*(fy))*amp*vol);
+//smooth = lerp(map(noise(xoff,yoff),0,1,0,((fft.getBand(freq))*fx*fy*(amp)))*(vol),map(noise(xoff,yoff),0,1,0,((fft.getBand(freq+1))*fx*fy*(amp)))*(vol),amt);
+            colorArray[x][y] = map(noise(xoff,yoff),0,1,0,(smooth*fx*fy*(amp)))*(vol);
+//smooth = lerp(0,fft.getBand(freq),amt);
+            cubeArray[x][y] = (smooth*(amp))*vol;  // third vertex arrays
+//smooth = lerp(((fft.getBand(freq))*(amp))*(fx)*(fy)*fx*fy*fx*fy*fx*fy*(vol),((fft.getBand(freq+1))*(amp))*(fx)*(fy)*fx*fy*fx*fy*fx*fy*(vol),amt);
+            cubeArray1[x][y] = ((smooth)*(amp))*(fx)*(fy)*fx*fy*fx*fy*fx*fy*(vol);
+//smooth = lerp(map(noise(xoff,yoff),0,1,0,(fft.getBand(freq)*(fx)*(fy)*fx*fy*fx*fy)*amp*vol),map(noise(xoff,yoff),0,1,0,(fft.getBand(freq+1)*(fx)*(fy)*fx*fy*fx*fy)*amp*vol),amt);
+            rayoArray[x][y] = map(noise(xoff,yoff),0,1,0,(smooth*(fx)*(fy)*fx*fy*fx*fy)*amp*vol);
+//smooth = lerp(fft.getBand(freq)*amp*(fx)*(fy)*vol,fft.getBand(freq+1)*amp*(fx)*(fy)*vol,amt);
+            pyramidArray[x][y] = smooth*amp*(fx)*(fy)*vol;
+//smooth = lerp(fft.getBand(freq)*amp*fx2*fy2*vol,fft.getBand(freq+1)*amp*fx2*fy2*vol,amt);
+            flagArray[x][y] = smooth*amp*fx2*fy2*vol;
 }
             xoff += passXoff;
             if  (x < (ix)+(areax/2)) {
