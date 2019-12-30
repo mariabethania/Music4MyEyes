@@ -5,7 +5,7 @@ if (mouseX > width*0.9 && mouseY > height*0.47 && mouseY < height*0.53) {
 }
 
 if (mouseX < width*0.1 && mouseY > height*0.47 && mouseY < height*0.53) {
-  text(amt,10,height*0.5);
+  text(amt,0,height*0.5);
 }
 
   if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height/30) {
